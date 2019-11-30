@@ -106,9 +106,17 @@ add_subdirectory(assimp)
 #set_target_properties(assimp PROPERTIES FOLDER "DEPENDENCIES/ASSIMP")
 
 #CGLM
-add_subdirectory(cglm)
-#file(GLOB CGLM_HEADERS cglm/include/*.h)
-#file(GLOB CGLM_SOURCES cglm/src/*.c)
-#add_library(cglm INTERFACE)
-#set_target_properties(cglm PROPERTIES FOLDER "DEPENDENCIES/CGLM")
-#target_include_directories(cglm INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/cglm/include")
+file(GLOB CGLM_HEADERS cglm/include/*.h)
+
+file(GLOB CGLM_CALL_HEADERS cglm/include/call/*.h)
+file(GLOB CGLM_SIMD_HEADERS cglm/include/simd/*.h)
+file(GLOB CGLM_SIMD_SSE2_HEADERS cglm/include/simd/sse2*.h)
+file(GLOB CGLM_AVX_HEADERS cglm/include/avx/*.h)
+file(GLOB CGLM_NEON_HEADERS cglm/include/neon/*.h)
+file(GLOB CGLM_STRUCT_HEADERS cglm/include/struct/*.h)
+
+file(GLOB CGLM_SOURCES cglm/src/*.c cglm/src/*.h)
+
+add_library(cglm STATIC ${CGLM_SOURCES})
+set_target_properties(cglm PROPERTIES FOLDER "DEPENDENCIES/CGLM")
+target_include_directories(cglm PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/cglm/include")

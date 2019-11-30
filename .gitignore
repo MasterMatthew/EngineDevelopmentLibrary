@@ -4,5 +4,5 @@ build/
 res/
 
 #Dependencies
-dep/*
-!dep/CmakeLists.txt
+#dep/*
+#!dep/CmakeLists.txt

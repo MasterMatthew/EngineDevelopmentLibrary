@@ -1,0 +1,30 @@
+[submodule "dep/stb"]
+	path = dep/stb
+	url = https://github.com/nothings/stb
+[submodule "dep/assimp"]
+	path = dep/assimp
+	url = https://github.com/assimp/assimp
+[submodule "dep/cglm"]
+	path = dep/cglm
+	url = https://github.com/recp/cglm
+[submodule "dep/glfw"]
+	path = dep/glfw
+	url = https://github.com/glfw/glfw
+[submodule "dep/glslang"]
+	path = dep/glslang
+	url = https://github.com/KhronosGroup/glslang
+[submodule "dep/shaderc"]
+	path = dep/shaderc
+	url = https://github.com/google/shaderc
+[submodule "dep/spirv-headers"]
+	path = dep/spirv-headers
+	url = https://github.com/KhronosGroup/SPIRV-Headers
+[submodule "dep/vulkan-loader"]
+	path = dep/vulkan-loader
+	url = https://github.com/KhronosGroup/Vulkan-Loader
+[submodule "dep/vulkan-headers"]
+	path = dep/vulkan-headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers
+[submodule "dep/spirv-tools"]
+	path = dep/spirv-tools
+	url = https://github.com/KhronosGroup/SPIRV-Tools
