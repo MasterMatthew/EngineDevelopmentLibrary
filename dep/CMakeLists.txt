@@ -117,6 +117,9 @@ file(GLOB CGLM_STRUCT_HEADERS cglm/include/struct/*.h)
 
 file(GLOB CGLM_SOURCES cglm/src/*.c cglm/src/*.h)
 
+
 add_library(cglm STATIC ${CGLM_SOURCES})
 set_target_properties(cglm PROPERTIES FOLDER "DEPENDENCIES/CGLM")
 target_include_directories(cglm PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/cglm/include")
+
+add_definitions(-DCGLM_DLL)

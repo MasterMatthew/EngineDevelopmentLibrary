@@ -5,5 +5,5 @@ add_executable(demo ${DEMO_SOURCES})
 
 target_link_libraries(demo graphics)
 
-set_target_properties(demo PROPERTIES FOLDER "Demos" CXX_STANDARD 17)
-
+set_target_properties(demo PROPERTIES FOLDER "Demos" CXX_STANDARD 17
+					VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}")
