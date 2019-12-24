@@ -1,5 +1,7 @@
 #LIBRARY MODULES / ABSTRACTION LAYER
+add_subdirectory(debug)
 add_subdirectory(library_commons)
+
 
 add_subdirectory(ecs)
 add_subdirectory(io_module)
