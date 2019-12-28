@@ -28,3 +28,6 @@
 [submodule "dep/spirv-tools"]
 	path = dep/spirv-tools
 	url = https://github.com/KhronosGroup/SPIRV-Tools
+[submodule "dep/spdlog"]
+	path = dep/spdlog
+	url = https://github.com/gabime/spdlog.git

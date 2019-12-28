@@ -1,3 +1,5 @@
+#SPDLOG
+add_subdirectory(spdlog)
 
 #VULKAN
 add_subdirectory(vulkan-headers)
