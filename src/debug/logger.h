@@ -24,6 +24,13 @@
 #define LOG_LEVEL_ERROR SPDLOG_LEVEL_ERROR
 #define LOG_LEVEL_CRIT	SPDLOG_LEVEL_CRITICAL
 
+#define LOG_ENUM_TRACE	spdlog::level::level_enum::trace
+#define LOG_ENUM_DEBUG	spdlog::level::level_enum::debug
+#define LOG_ENUM_INFO	spdlog::level::level_enum::info
+#define LOG_ENUM_WARN	spdlog::level::level_enum::warn
+#define LOG_ENUM_ERROR	spdlog::level::level_enum::error
+#define LOG_ENUM_CRIT	spdlog::level::level_enum::critical
+
 #define LOG_TEXT_TRACE	"[TRACE]"
 #define LOG_TEXT_DEBUG	"[DEBUG]"
 #define LOG_TEXT_INFO	"[INFO] "
@@ -45,13 +52,20 @@ inline char* log_level_text(uint32_t level) {
 
 typedef spdlog::source_loc src_loc;
 typedef spdlog::string_view_t str_view_t;
+typedef std::shared_ptr<spdlog::logger> logger_t;
+
+inline logger_t& default_logger_instance() {
+	static logger_t logger = spdlog::default_logger();
+	return logger;
+}
 
 inline void init_default_logger() {
 	time_t t; time(&t);
 	char* filename = (char*) malloc((sizeof(time_t) + 8) * sizeof(char));
 	sprintf(filename, "%d-log.txt", t);
 
-	auto logger = spdlog::basic_logger_mt("LOG", filename);
+	logger_t& logger = default_logger_instance();
+	logger = spdlog::basic_logger_mt("LOG", filename);
 	spdlog::set_default_logger(logger);
 }
 
@@ -59,9 +73,9 @@ inline void init_default_logger() {
 //extern "C" inline void log();
 
 //template<typename... Args>
-//inline void log(src_loc src, uint32_t level, str_view_t fmt, const Args &... args) { spdlog::log(src, level, fmt, args); }
+//inline void log(logger_t src, uint32_t level, str_view_t fmt, ...) {spdlog::log(src, level, fmt, args);}
 
-#define LOG(logger, level, ...)			log(logger, level, __VA_ARGS__)
+#define LOG(logger, level, ...)			SPDLOG_LOGGER_CALL(logger, level, __VA_ARGS__)
 
 #define LOG_LOGGER_TRACE(logger, ...)	SPDLOG_LOGGER_TRACE(logger, __VA_ARGS__)
 #define LOG_TRACE(...)					SPDLOG_TRACE(__VA_ARGS__)
