@@ -13,52 +13,53 @@ extern "C" {
 #endif
 #endif // __cplusplus
 
+static void* vulkan_logger_instance() {
+	return default_logger_instance();
+	//return console_logger("VULKAN");
+}
 
 //Prints the result of a vulkan API call
 static void checkResult(VkResult result, char* action) {
 	#ifdef _DEBUG
 	
 	if (result == VK_SUCCESS) { 
-		//printf("%s: SUCCESS!\n", action);
-		LOG_DEBUG("%s: SUCCESS!", action);
+		LOG_LOGGER_DEBUG(vulkan_logger_instance(), "%s: SUCCESS!", action);
 		return; 
 	}
 
-	fprintf(stderr, "%s: FAILED - ", action);
-
 	switch (result) {
 	case VK_ERROR_OUT_OF_HOST_MEMORY:
-		fprintf(stderr, "Out of host Memory!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Out of host Memory!");
 		break;
 	case VK_ERROR_OUT_OF_DEVICE_MEMORY:
-		fprintf(stderr, "Out of device Memory!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Out of device Memory!");
 		break;
 	case VK_ERROR_INITIALIZATION_FAILED:
-		fprintf(stderr, "Initialization failed!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Initialization failed!");
 		break;
 	case VK_ERROR_LAYER_NOT_PRESENT:
-		fprintf(stderr, "Layer not present!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Layer not present!");
 		break;
 	case VK_ERROR_EXTENSION_NOT_PRESENT:
-		fprintf(stderr, "Extension not present!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Extension not present!");
 		break;
 	case VK_ERROR_FEATURE_NOT_PRESENT:
-		fprintf(stderr, "Feature not present!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Feature not present!");
 		break;
 	case VK_ERROR_TOO_MANY_OBJECTS:
-		fprintf(stderr, "Too many objects!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Too many objects!");
 		break;
 	case VK_ERROR_INCOMPATIBLE_DRIVER:
-		fprintf(stderr, "Incompatible driver!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Incompatible driver!");
 		break;
 	case VK_ERROR_DEVICE_LOST:
-		fprintf(stderr, "Device lost!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Device lost!");
 		break;
 	case VK_ERROR_INVALID_SHADER_NV:
-		fprintf(stderr, "Invalid shader!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Invalid shader!");
 		break;
 	default:
-		fprintf(stderr, "Unknown error!\n");
+		LOG_LOGGER_ERROR(vulkan_logger_instance(), "%s: FAILED - %s", action, "Unknown error!");
 		break;
 	}
 	#endif // _DEBUG

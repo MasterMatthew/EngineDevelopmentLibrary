@@ -4,11 +4,12 @@
 #include <iostream>
 #include <string>
 #include <sstream>
+#include <unordered_map>
 
 #include "logger.h"
 #include "spdlog/spdlog.h"
-#include "spdlog/details/log_msg.h"
-#include "spdlog/details/backtracer.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
+#include "spdlog/sinks/basic_file_sink.h"
 
 #define LOG_LEVEL_ENUM { \
 spdlog::level::level_enum::trace, \
@@ -38,6 +39,16 @@ void debug_log(void* logger, uint32_t level, char* fmt, ...) {
 
 void* default_logger_instance() { return spdlog::default_logger_raw(); }
 
+static std::unordered_map<char*, std::shared_ptr<spdlog::logger>> logger_map;
+
+//SPDLOG is broken and these don't work properly because of that
+void* create_console_logger(char* name) {
+	return spdlog::stdout_color_mt(name).get();
+}
+
+void* create_file_logger(char* name, char* filename) {
+	return spdlog::basic_logger_mt(name, filename).get();
+}
 
 /*
 #define LOG_ACTIVE_LEVEL LOG_LEVEL_TRACE

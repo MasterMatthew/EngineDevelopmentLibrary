@@ -32,6 +32,8 @@ void debug_log(void* logger, uint32_t level, char* fmt, ...);
 
 void* default_logger_instance();
 
+void* console_logger(char* name);
+void* file_logger(char* name, char* filename);
 
 
 #define LOG_LOGGER(logger, level, ...)	debug_log(logger, level, __VA_ARGS__)
