@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 
+#include "logger.h"
 #include "vulkan/vulkan.h"
 
 #ifdef __cplusplus
@@ -16,8 +17,12 @@ extern "C" {
 //Prints the result of a vulkan API call
 static void checkResult(VkResult result, char* action) {
 	#ifdef _DEBUG
-
-	if (result == VK_SUCCESS) { printf("%s: SUCCESS!\n", action); return; }
+	
+	if (result == VK_SUCCESS) { 
+		//printf("%s: SUCCESS!\n", action);
+		LOG_DEBUG("%s: SUCCESS!", action);
+		return; 
+	}
 
 	fprintf(stderr, "%s: FAILED - ", action);
 

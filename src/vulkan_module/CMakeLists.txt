@@ -11,6 +11,7 @@ target_link_libraries(vulkan_module Vulkan::Vulkan)
 target_link_libraries(vulkan_module cglm)
 
 target_link_libraries(vulkan_module library_commons)
+target_link_libraries(vulkan_module debug_lib)
 
 set_target_properties(vulkan_module PROPERTIES FOLDER "EngineLib")
 

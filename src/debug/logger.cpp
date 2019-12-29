@@ -1,4 +1,45 @@
 
+#define SPDLOG_ACTIVE_LEVEL 0
+
+#include <iostream>
+#include <string>
+#include <sstream>
+
+#include "logger.h"
+#include "spdlog/spdlog.h"
+#include "spdlog/details/log_msg.h"
+#include "spdlog/details/backtracer.h"
+
+#define LOG_LEVEL_ENUM { \
+spdlog::level::level_enum::trace, \
+spdlog::level::level_enum::debug, \
+spdlog::level::level_enum::info, \
+spdlog::level::level_enum::warn, \
+spdlog::level::level_enum::err, \
+spdlog::level::level_enum::critical \
+}
+static spdlog::level::level_enum log_level_enum[6] = LOG_LEVEL_ENUM;
+
+//A wrapper for spdlog to maintain C portability
+void debug_log(void* logger, uint32_t level, char* fmt, ...) {
+	spdlog::set_level(spdlog::level::level_enum::trace);
+	spdlog::logger* logger_ptr = (spdlog::logger*) logger;
+	spdlog::level::level_enum level_enum = log_level_enum[level];
+
+	va_list args; va_start(args, fmt);
+	int size = 1 + vsnprintf(NULL, 0, fmt, args);
+	char* msg = (char*) malloc(size * sizeof(char));
+	vsnprintf(msg, size, fmt, args);
+	va_end(args);
+
+	logger_ptr->log(level_enum, msg);
+	free(msg);
+}
+
+void* default_logger_instance() { return spdlog::default_logger_raw(); }
+
+
+/*
 #define LOG_ACTIVE_LEVEL LOG_LEVEL_TRACE
 #include "logger.h"
 
@@ -15,7 +56,6 @@ void thread_log(void* arg) {
 int main() {
 	spdlog::set_level(spdlog::level::level_enum::trace);
 	init_default_logger();
-	///thread_t t0, t1, t2, t3, t4, t5;
 
 	arg_struct* a0 = (arg_struct*) malloc(sizeof(arg_struct));
 	arg_struct* a1 = (arg_struct*) malloc(sizeof(arg_struct));
@@ -30,15 +70,6 @@ int main() {
 	a3->level = LOG_ENUM_DEBUG; a3->str = "Thread 3";
 	a4->level = LOG_ENUM_CRIT; a4->str = "Thread 4";
 	a5->level = LOG_ENUM_WARN; a5->str = "Thread 5";
-
-	//arg_struct a5 = { LOG_LEVEL_WARN, "Thread 5" };
-
-	//thread_create(&t0, thread_log, (void*)a0);
-	//thread_create(&t1, thread_log, (void*)a1);
-	//thread_create(&t2, thread_log, (void*)a2);
-	//thread_create(&t3, thread_log, (void*)a3);
-	//thread_create(&t4, thread_log, (void*)a4);
-	//thread_create(&t5, thread_log, (void*)&a5);
 
 	std::thread t0(thread_log, (void*)a0);
 	std::thread t1(thread_log, (void*)a1);
@@ -57,11 +88,5 @@ int main() {
 	t3.join();
 	t4.join();
 	t5.join();
-
-	//thread_join(t0, NULL);
-	//thread_join(t1, NULL);
-	//thread_join(t2, NULL);
-	//thread_join(t3, NULL);
-	//thread_join(t4, NULL);
-	//thread_join(t5, NULL);
 }
+*/
