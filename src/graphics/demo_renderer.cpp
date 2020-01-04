@@ -1,19 +1,14 @@
 #include "demo_renderer.h"
 
-#define GLFW_EXPOSE_NATIVE_WIN32
-#define GLFW_INCLUDE_VULKAN
-#include "GLFW/glfw3.h"
-#include "GLFW/glfw3native.h"
-
 #include "stb_image.h"
 //#define VULKAN_MODULE_EXPOSE_STATE
 #include "vulkan_module.h"
 #include "graphics_module.h"
+#include "glfw_module.h"
 //#include "vulkan_init.h"
 
 const uint32_t WINDOW_WIDTH = 800;
 const uint32_t WINDOW_HEIGHT = 600;
-static GLFWwindow* window;
 
 VkRenderPass renderpass;
 
@@ -36,16 +31,11 @@ VkSemaphore imageReady, renderingComplete;
 
 //Temporary renderer, should be moved to ther demo folder
 void initRenderer() {
-	glfwInit();
-
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-	window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World", NULL, NULL);
+	createWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "Hello World");
 
 	//TODO: Deal with GLFW
 	uint32_t glfwExtensionCount = 0;
-	const char** glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
+	const char** glfwExtensions = getRequiredExtensions(&glfwExtensionCount);
 
 	string_array layers;
 	layers.stringCount = 3;
@@ -72,7 +62,7 @@ void initRenderer() {
 	//Initialize Vulkan
 	initVulkan("Demo", "EngineDev", &layers, &totalExtensions);
 	//Create Surface
-	createSurface(WINDOW_WIDTH, WINDOW_HEIGHT, glfwGetWin32Window(window), &swapchainImageCount);
+	createSurface(WINDOW_WIDTH, WINDOW_HEIGHT, getWindowHandle(), &swapchainImageCount);
 	//Create Renderpass
 	createRenderpass(&renderpass);
 
@@ -199,8 +189,8 @@ void initRenderer() {
 
 
 void runRenderer() {
-	while (!glfwWindowShouldClose(window)) {
-		glfwPollEvents();
+	while (!windowShouldClose()) {
+		pollEvents();
 		updateUniformBuffer(uniformBufferMemory);
 
 		uint32_t imageIndex = 0;

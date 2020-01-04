@@ -4,6 +4,7 @@ add_subdirectory(library_commons)
 
 
 add_subdirectory(ecs)
+add_subdirectory(glfw_module)
 add_subdirectory(io_module)
 add_subdirectory(vulkan_module)
 add_subdirectory(shader_module)

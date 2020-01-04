@@ -6,7 +6,6 @@ add_library(graphics STATIC ${GRAPHICS_SOURCES})
 target_link_libraries(graphics graphics_module)
 target_link_libraries(graphics stb)
 target_link_libraries(graphics assimp)
-target_link_libraries(graphics glfw)
 target_link_libraries(graphics cglm)
 
 set_target_properties(graphics PROPERTIES FOLDER "EngineFramework" CXX_STANDARD 17)

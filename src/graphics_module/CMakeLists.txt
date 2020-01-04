@@ -6,6 +6,7 @@ add_library(graphics_module STATIC ${GRAPHICS_MODULE_SOURCES})
 target_link_libraries(graphics_module vulkan_module)
 target_link_libraries(graphics_module shader_module)
 target_link_libraries(graphics_module io_module)
+target_link_libraries(graphics_module glfw_module)
 
 set_target_properties(graphics_module PROPERTIES FOLDER "EngineLib")
 
