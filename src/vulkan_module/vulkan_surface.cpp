@@ -2,16 +2,16 @@
 
 #include "vulkan_state.h"
 #include "vulkan_debug.h"
+#include "vulkan_swapchain.h"
 
 //Creates a surface using win32 window handle
 void createSurface(const uint32_t window_width, const uint32_t window_height, const void* hwnd, uint32_t* swapchainImageCount) {
-	VkWin32SurfaceCreateInfoKHR info = {
-		.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR,
-		.pNext = NULL,
-		.flags = 0,
-		.hinstance = GetModuleHandle(NULL),
-		.hwnd = hwnd
-	};
+	VkWin32SurfaceCreateInfoKHR info = {};
+	info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
+	info.pNext = NULL;
+	info.flags = 0;
+	info.hinstance = GetModuleHandle(NULL);
+	info.hwnd = (HWND) hwnd;
 
 	checkResult(vkCreateWin32SurfaceKHR(vulkan_instance, &info, NULL, &vulkan_surface), "Surface creation");
 
@@ -29,7 +29,7 @@ void createSurface(const uint32_t window_width, const uint32_t window_height, co
 	//Find Surface Format
 	uint32_t surfaceFormatCount;
 	vkGetPhysicalDeviceSurfaceFormatsKHR(vulkan_physical_device, vulkan_surface, &surfaceFormatCount, NULL);
-	VkSurfaceFormatKHR* surfaceFormats = malloc(surfaceFormatCount * sizeof(VkSurfaceFormatKHR));
+	VkSurfaceFormatKHR *surfaceFormats = (VkSurfaceFormatKHR *) malloc(surfaceFormatCount * sizeof(VkSurfaceFormatKHR));
 	vkGetPhysicalDeviceSurfaceFormatsKHR(vulkan_physical_device, vulkan_surface, &surfaceFormatCount, surfaceFormats);
 
 	vulkan_surface_format = surfaceFormats[0];
@@ -43,7 +43,7 @@ void createSurface(const uint32_t window_width, const uint32_t window_height, co
 	//Find Present Mode
 	uint32_t presentModeCount;
 	vkGetPhysicalDeviceSurfacePresentModesKHR(vulkan_physical_device, vulkan_surface, &presentModeCount, NULL);
-	VkPresentModeKHR* presentModes = malloc(presentModeCount * sizeof(VkPresentModeKHR));
+	VkPresentModeKHR *presentModes = (VkPresentModeKHR *) malloc(presentModeCount * sizeof(VkPresentModeKHR));
 	vkGetPhysicalDeviceSurfacePresentModesKHR(vulkan_physical_device, vulkan_surface, &presentModeCount, presentModes);
 
 	vulkan_present_mode = VK_PRESENT_MODE_FIFO_KHR;

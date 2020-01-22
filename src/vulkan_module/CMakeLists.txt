@@ -1,5 +1,5 @@
 
-file(GLOB_RECURSE VULKAN_MODULE_SOURCES *.h *.c)
+file(GLOB_RECURSE VULKAN_MODULE_SOURCES *.h *.cpp)
 
 
 add_library(vulkan_module STATIC ${VULKAN_MODULE_SOURCES})
@@ -12,6 +12,8 @@ target_link_libraries(vulkan_module cglm)
 
 target_link_libraries(vulkan_module library_commons)
 target_link_libraries(vulkan_module debug_lib)
+
+target_link_libraries(vulkan_module vma)
 
 set_target_properties(vulkan_module PROPERTIES FOLDER "EngineLib")
 

@@ -3,12 +3,6 @@
 
 #include "vulkan/vulkan.h"
 
-#ifdef __cplusplus
-extern "C" {
-#ifdef UNDEFINED //Exists solely so that I can enter without getting auto-tabbed in
-}
-#endif
-#endif // __cplusplus
 
 static const VkImageSubresourceLayers SUBRESOURCE_LAYERS_COLOR = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 0, 1 };
 static const VkImageSubresourceRange SUBRESOURCE_RANGE_COLOR = { VK_IMAGE_ASPECT_COLOR_BIT, 0, 1, 0, 1 };
@@ -19,7 +13,4 @@ void transitionImage(VkCommandBuffer cb, VkImage image, const VkFormat format, c
 void copyBufferToImage(VkCommandBuffer cb, VkBuffer srcBuffer, VkImage dstImage, uint32_t imageWidth, uint32_t imageHeight);
 void createTextureImageView(const VkImage image, const VkFormat format, VkImageView *imageView);
 
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 #endif // !VULKAN_IMAGE_H

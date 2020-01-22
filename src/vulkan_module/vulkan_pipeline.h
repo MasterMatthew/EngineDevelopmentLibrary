@@ -4,10 +4,6 @@
 #include "vulkan/vulkan.h"
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 
 void createRenderpass(VkRenderPass* renderpass);
 void destroyRenderpass(VkRenderPass renderpass);
@@ -16,7 +12,7 @@ void createShaderModule(const uint32_t size, const uint32_t* code, VkShaderModul
 
 void createPipelineLayout(const uint32_t setLayoutCount, const VkDescriptorSetLayout* pSetLayouts, VkPipelineLayout* layout);
 void destroyPipelineLayout(VkPipelineLayout pipelineLayout);
-void createPipeline(VkShaderModule* shaders, const VkPipelineLayout layout, const VkRenderPass renderpass, VkPipeline* pipeline);
+void createPipeline(VkShaderModule* shaders, VkPipelineLayout layout, VkRenderPass renderpass, VkPipeline* pipeline);
 void destroyPipeline(VkPipeline pipeline);
 
 
@@ -30,9 +26,4 @@ static const VkPipelineInputAssemblyStateCreateInfo PIPELINE_TOPOLOGY_TRIANGLE_L
 	/*.primitiveRestartEnable = */ VK_FALSE
 };
 
-
-
-#ifdef __cplusplus
-}
-#endif
 #endif // !VULKAN_PIPELINE_H

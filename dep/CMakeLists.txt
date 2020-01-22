@@ -125,3 +125,9 @@ set_target_properties(cglm PROPERTIES FOLDER "DEPENDENCIES/CGLM")
 target_include_directories(cglm PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/cglm/include")
 
 add_definitions(-DCGLM_DLL)
+
+#VulkanMemoryAllocator
+file(GLOB VMA_SOURCES VulkanMemoryAllocator/src/*.cpp VulkanMemoryAllocator/src/*.h)
+add_library(vma STATIC ${CGLM_SOURCES})
+set_target_properties(vma PROPERTIES FOLDER "DEPENDENCIES/VMA")
+target_include_directories(vma PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/VulkanMemoryAllocator/src")

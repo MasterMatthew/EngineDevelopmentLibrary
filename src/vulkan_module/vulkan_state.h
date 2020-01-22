@@ -9,6 +9,7 @@ This holds all state involved with the creation of a vulkan instance and vulkan 
 
 #include "vulkan/vulkan.h"
 
+
 //Vulkan Instance
 extern VkInstance vulkan_instance;
 
@@ -31,11 +32,11 @@ extern uint32_t vulkan_transfer_family; //Use for CPU-GPU transfers
 extern uint32_t vulkan_compute_family;  //Use for async compute operations
 
 extern uint32_t vulkan_graphics_count;
-extern VkQueue** vulkan_graphics_queues;
+extern VkQueue* vulkan_graphics_queues;
 extern uint32_t vulkan_compute_count;
-extern VkQueue** vulkan_compute_queues;
+extern VkQueue* vulkan_compute_queues;
 extern uint32_t vulkan_transfer_count;
-extern VkQueue** vulkan_transfer_queues;
+extern VkQueue* vulkan_transfer_queues;
 
 //Vulkan surface
 extern uint32_t surface_width;
@@ -53,6 +54,5 @@ extern VkSwapchainKHR vulkan_swapchain;
 extern uint32_t vulkan_swapchain_image_count;
 extern VkImage* vulkan_swapchain_images;
 extern VkImageView* vulkan_swapchain_imageviews;
-
 
 #endif // !VULKAN_STATE_H

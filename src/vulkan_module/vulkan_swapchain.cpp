@@ -7,9 +7,9 @@
 void createSwapchain(const uint32_t window_width, const uint32_t window_height) {
 	//Determine swapchain extent
 	if (vulkan_surface_capabilities.currentExtent.width == UINT32_MAX) {
-		vulkan_swapchain_extent = (VkExtent2D) {
+		vulkan_swapchain_extent = {
 			max(vulkan_surface_capabilities.minImageExtent.width, min(vulkan_surface_capabilities.maxImageExtent.width, window_width)),
-				max(vulkan_surface_capabilities.minImageExtent.height, min(vulkan_surface_capabilities.maxImageExtent.height, window_height))
+			max(vulkan_surface_capabilities.minImageExtent.height, min(vulkan_surface_capabilities.maxImageExtent.height, window_height))
 		};
 	}
 	else {
@@ -47,11 +47,11 @@ void createSwapchain(const uint32_t window_width, const uint32_t window_height) 
 	checkResult(vkCreateSwapchainKHR(vulkan_logical_device, &swapchainCreateInfo, NULL, &vulkan_swapchain), "Swapchain creation");
 
 	vkGetSwapchainImagesKHR(vulkan_logical_device, vulkan_swapchain, &vulkan_swapchain_image_count, NULL);
-	vulkan_swapchain_images = malloc(vulkan_swapchain_image_count * sizeof(VkImage));
+	vulkan_swapchain_images = (VkImage *) malloc(vulkan_swapchain_image_count * sizeof(VkImage));
 	vkGetSwapchainImagesKHR(vulkan_logical_device, vulkan_swapchain, &vulkan_swapchain_image_count, vulkan_swapchain_images);
 	printf("Swapchain images retrieved!\n");
 
-	vulkan_swapchain_imageviews = malloc(vulkan_swapchain_image_count * sizeof(VkImageView));
+	vulkan_swapchain_imageviews = (VkImageView *) malloc(vulkan_swapchain_image_count * sizeof(VkImageView));
 
 	VkImageViewCreateInfo imageViewCreateInfo;
 	imageViewCreateInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -92,16 +92,15 @@ void presentQueue(
 	const uint32_t waitSemaphoreCount, const VkSemaphore* pwaitSemaphores,
 	//const uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, 
 	const uint32_t* pImageIndices) {
-	VkPresentInfoKHR presentInfo = {
-		.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR,
-		.pNext = NULL,
-		.waitSemaphoreCount = waitSemaphoreCount,
-		.pWaitSemaphores = pwaitSemaphores,
-		.swapchainCount = 1,
-		.pSwapchains = &vulkan_swapchain,
-		.pImageIndices = pImageIndices,
-		.pResults = NULL
-	};
+	VkPresentInfoKHR presentInfo = {};
+	presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+	presentInfo.pNext = NULL;
+	presentInfo.waitSemaphoreCount = waitSemaphoreCount;
+	presentInfo.pWaitSemaphores = pwaitSemaphores;
+	presentInfo.swapchainCount = 1;
+	presentInfo.pSwapchains = &vulkan_swapchain;
+	presentInfo.pImageIndices = pImageIndices;
+	presentInfo.pResults = NULL;
 
 	if (vkQueuePresentKHR(vulkan_graphics_queues[0], &presentInfo) != VK_SUCCESS) {
 		printf("Failed to present!\n");

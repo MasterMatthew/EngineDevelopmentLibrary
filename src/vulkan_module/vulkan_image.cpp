@@ -1,7 +1,9 @@
 #include "vulkan_image.h"
 
+#include "vulkan_buffer.h"
 #include "vulkan_command_buffer.h"
 #include "vulkan_constant.h"
+#include "vulkan_debug.h"
 #include "vulkan_state.h"
 
 
@@ -57,8 +59,8 @@ void copyBufferToImage(VkCommandBuffer cb, VkBuffer srcBuffer, VkImage dstImage,
 	copyRegion.bufferImageHeight = 0;
 
 	copyRegion.imageSubresource = SUBRESOURCE_LAYERS_COLOR;
-	copyRegion.imageOffset = (VkOffset3D) { 0, 0, 0 };
-	copyRegion.imageExtent = (VkExtent3D) { imageWidth, imageHeight, 1 };
+	copyRegion.imageOffset = { 0, 0, 0 };
+	copyRegion.imageExtent = { imageWidth, imageHeight, 1 };
 
 	vkCmdCopyBufferToImage(cb, srcBuffer, dstImage, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, 1, &copyRegion);
 }

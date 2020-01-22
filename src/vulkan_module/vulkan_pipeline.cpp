@@ -78,26 +78,26 @@ void destroyPipelineLayout(VkPipelineLayout pipelineLayout) {
 }
 
 //These will be changed
-void createPipeline(const VkShaderModule* shaders, const VkPipelineLayout layout, const VkRenderPass renderpass, VkPipeline* pipeline) {
-	VkPipelineShaderStageCreateInfo* shaderStageCreateInfo = (VkPipelineShaderStageCreateInfo[]) {{
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.stage = VK_SHADER_STAGE_VERTEX_BIT,
-		.module = shaders[0],
-		.pName = "main",
-		.pSpecializationInfo = NULL
+void createPipeline(VkShaderModule* shaders, VkPipelineLayout layout, VkRenderPass renderpass, VkPipeline* pipeline) {
+	VkPipelineShaderStageCreateInfo shaderStageCreateInfo[] = {{
+		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		NULL,
+		0,
+		VK_SHADER_STAGE_VERTEX_BIT,
+		shaders[0],
+		"main",
+		NULL
 	}, {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.stage = VK_SHADER_STAGE_FRAGMENT_BIT,
-		.module = shaders[1],
-		.pName = "main",
-		.pSpecializationInfo = NULL
+		VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO,
+		NULL,
+		0,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		shaders[1],
+		"main",
+		NULL
 	}};
 
-	VkVertexInputBindingDescription* bindingDescription = malloc(3 * sizeof(VkVertexInputBindingDescription));
+	VkVertexInputBindingDescription *bindingDescription = (VkVertexInputBindingDescription *) malloc(3 * sizeof(VkVertexInputBindingDescription));
 	bindingDescription[0].binding = 0;
 	bindingDescription[0].stride = sizeof(vec3);
 	bindingDescription[0].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -110,7 +110,7 @@ void createPipeline(const VkShaderModule* shaders, const VkPipelineLayout layout
 	bindingDescription[2].stride = sizeof(vec2);
 	bindingDescription[2].inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
 
-	VkVertexInputAttributeDescription* attributeDescription = malloc(3 * sizeof(VkVertexInputAttributeDescription));
+	VkVertexInputAttributeDescription *attributeDescription = (VkVertexInputAttributeDescription *) malloc(3 * sizeof(VkVertexInputAttributeDescription));
 	attributeDescription[0].binding = 0;
 	attributeDescription[0].format = VK_FORMAT_R32G32B32_SFLOAT;
 	attributeDescription[0].location = 0;
@@ -126,25 +126,24 @@ void createPipeline(const VkShaderModule* shaders, const VkPipelineLayout layout
 	attributeDescription[2].location = 2;
 	attributeDescription[2].offset = 0;// offsetof(vertex, texCoord);
 
-	VkPipelineVertexInputStateCreateInfo inputInfo = (VkPipelineVertexInputStateCreateInfo) {
-		.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.vertexBindingDescriptionCount = 3,
-		.pVertexBindingDescriptions = bindingDescription,
-		.vertexAttributeDescriptionCount = 3,
-		.pVertexAttributeDescriptions = attributeDescription
-	};
+	VkPipelineVertexInputStateCreateInfo inputInfo = {};
+	inputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
+	inputInfo.pNext = NULL;
+	inputInfo.flags = 0;
+	inputInfo.vertexBindingDescriptionCount = 3;
+	inputInfo.pVertexBindingDescriptions = bindingDescription;
+	inputInfo.vertexAttributeDescriptionCount = 3;
+	inputInfo.pVertexAttributeDescriptions = attributeDescription;
 
 	VkViewport viewport = {
-		.x = 0.0f, .y = 0.0f,
-		.width = vulkan_swapchain_extent.width, //Change to support buffers of different sizes
-		.height = vulkan_swapchain_extent.height,
-		.minDepth = 0.0f, .maxDepth = 1.0f
+		0.0f, 0.0f,
+		vulkan_swapchain_extent.width, //Change to support buffers of different sizes
+		vulkan_swapchain_extent.height,
+		0.0f, 1.0f
 	};
 
 	VkRect2D scissor;
-	scissor.offset = (VkOffset2D) { 0, 0 };
+	scissor.offset = { 0, 0 };
 	scissor.extent = vulkan_swapchain_extent;
 
 	VkPipelineViewportStateCreateInfo viewportInfo;

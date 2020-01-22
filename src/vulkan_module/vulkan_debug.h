@@ -6,13 +6,6 @@
 #include "logger.h"
 #include "vulkan/vulkan.h"
 
-#ifdef __cplusplus
-extern "C" {
-#ifdef UNDEFINED //Exists solely so that I can enter without getting auto-tabbed in
-}
-#endif
-#endif // __cplusplus
-
 static void* vulkan_logger_instance() {
 	return default_logger_instance();
 	//return console_logger("VULKAN");
@@ -65,7 +58,4 @@ static void checkResult(VkResult result, char* action) {
 	#endif // _DEBUG
 }
 
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 #endif // !VULKAN_DEBUG_H

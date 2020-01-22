@@ -25,7 +25,7 @@ VkFramebuffer framebuffer;
 VkCommandBuffer commandBuffer;
 
 VkBuffer uniformBuffer;
-VkDeviceMemory uniformBufferMemory;
+VkDeviceMemory uniformMemory;
 
 VkSemaphore imageReady, renderingComplete;
 
@@ -60,7 +60,7 @@ void initRenderer() {
 	
 
 	//Initialize Vulkan
-	initVulkan("Demo", "EngineDev", &layers, &totalExtensions);
+	initVulkan("Demo", "EngineDev", layers, totalExtensions);
 	//Create Surface
 	createSurface(WINDOW_WIDTH, WINDOW_HEIGHT, getWindowHandle(), &swapchainImageCount);
 	//Create Renderpass
@@ -134,7 +134,7 @@ void initRenderer() {
 	}
 
 	createBuffer(sizeof(buffer_object), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		&uniformBuffer, &uniformBufferMemory);
+		&uniformBuffer, &uniformMemory);
 
 	//Texture loading
 	char* filename = "res/textures/texture.jpg";
@@ -153,7 +153,7 @@ void initRenderer() {
 	freeImage(pixels);
 
 	createBuffer(sizeof(buffer_object), VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
-		&uniformBuffer, &uniformBufferMemory);
+		&uniformBuffer, &uniformMemory);
 
 
 	VkSampler sampler;
@@ -191,7 +191,7 @@ void initRenderer() {
 void runRenderer() {
 	while (!windowShouldClose()) {
 		pollEvents();
-		updateUniformBuffer(uniformBufferMemory);
+		updateUniformBuffer(uniformMemory);
 
 		uint32_t imageIndex = 0;
 		//Disable double buffering

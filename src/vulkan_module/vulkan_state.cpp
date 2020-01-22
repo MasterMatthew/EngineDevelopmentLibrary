@@ -22,11 +22,11 @@ uint32_t vulkan_transfer_family = 0; //Use for CPU-GPU transfers
 uint32_t vulkan_compute_family = 0;  //Use for async compute operations
 
 uint32_t vulkan_graphics_count = 0;
-VkQueue **vulkan_graphics_queues = NULL;
+VkQueue *vulkan_graphics_queues = NULL;
 uint32_t vulkan_compute_count = 0;
-VkQueue **vulkan_compute_queues = NULL;
+VkQueue *vulkan_compute_queues = NULL;
 uint32_t vulkan_transfer_count = 0;
-VkQueue **vulkan_transfer_queues = NULL;
+VkQueue *vulkan_transfer_queues = NULL;
 
 //Vulkan surface
 uint32_t surface_width;

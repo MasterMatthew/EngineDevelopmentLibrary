@@ -1,7 +1,7 @@
 #include "graphics_module.h"
 
 void loadShader(const char* filename, const shaderc_shader_kind shaderType, VkShaderModule *shaderModule) {
-	uint32_t size;
+	int size;
 	char* code;
 	uint32_t compiledSize;
 	uint32_t *compiledCode;

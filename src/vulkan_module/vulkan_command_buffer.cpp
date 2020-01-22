@@ -7,12 +7,11 @@
 
 //Flags can be set to VK_COMMAND_POOL_CREATE_TRANSIENT_BIT and/or VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT
 inline void createCommandPool(const uint32_t queueFamilyIndex, const VkCommandPoolCreateFlagBits flags, VkCommandPool *commandPool) {
-	VkCommandPoolCreateInfo poolCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO,
-		.pNext = NULL,
-		.flags = flags,
-		.queueFamilyIndex = queueFamilyIndex
-	};
+	VkCommandPoolCreateInfo poolCreateInfo = {};
+	poolCreateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+	poolCreateInfo.pNext = NULL;
+	poolCreateInfo.flags = flags;
+	poolCreateInfo.queueFamilyIndex = queueFamilyIndex;
 
 	checkResult(vkCreateCommandPool(vulkan_logical_device, &poolCreateInfo, NULL, commandPool), "Command pool creation");
 }
@@ -39,13 +38,12 @@ void allocateCommandBuffer(const VkCommandPool commandPool, VkCommandBuffer* com
 }
 
 void allocateCommandBuffers(const VkCommandPool commandPool, const uint32_t commandBufferCount, VkCommandBuffer* commandBuffers) {
-	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {
-		.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO,
-		.pNext = NULL,
-		.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY,
-		.commandPool = commandPool,
-		.commandBufferCount = commandBufferCount
-	};
+	VkCommandBufferAllocateInfo commandBufferAllocateInfo = {};
+	commandBufferAllocateInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+	commandBufferAllocateInfo.pNext = NULL;
+	commandBufferAllocateInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+	commandBufferAllocateInfo.commandPool = commandPool;
+	commandBufferAllocateInfo.commandBufferCount = commandBufferCount;
 
 	checkResult(vkAllocateCommandBuffers(vulkan_logical_device, &commandBufferAllocateInfo, commandBuffers), "Command buffer allocation");
 }
@@ -71,18 +69,22 @@ void cmdBeginRenderpass(const VkCommandBuffer commandBuffer, const VkRenderPass 
 	renderpassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
 	renderpassInfo.pNext = NULL;
 	renderpassInfo.renderPass = renderpass;
-	renderpassInfo.renderArea.offset = (VkOffset2D) { 0, 0 };
+	renderpassInfo.renderArea.offset = { 0, 0 };
 	renderpassInfo.renderArea.extent = vulkan_swapchain_extent;
 	renderpassInfo.clearValueCount = 1;
-	renderpassInfo.pClearValues = &(VkClearValue) { 0.0f, 0.0f, 0.0f, 1.0f };
+	
+	VkClearValue pClearValues = { 0.0f, 0.0f, 0.0f, 1.0f };
+	renderpassInfo.pClearValues = &pClearValues; //TODO: POSSIBLE CAUSE OF CRASHES AS pClearValues goes out of scope
 	renderpassInfo.framebuffer = framebuffer;
 
 	vkCmdBeginRenderPass(commandBuffer, &renderpassInfo, VK_SUBPASS_CONTENTS_INLINE);
 }
 
 void cmdBindVertexBuffer(const VkCommandBuffer commandBuffer, const VertexBuffer vertexBuffer) {
+	VkBuffer pBuffers[] = { vertexBuffer.buffer, vertexBuffer.buffer, vertexBuffer.buffer };
+
 	vkCmdBindIndexBuffer(commandBuffer, vertexBuffer.buffer, 0, VK_INDEX_TYPE_UINT32);
-	vkCmdBindVertexBuffers(commandBuffer, 0, 3, (VkBuffer[]) { vertexBuffer.buffer, vertexBuffer.buffer, vertexBuffer.buffer }, vertexBuffer.pOffsets);
+	vkCmdBindVertexBuffers(commandBuffer, 0, 3, pBuffers, vertexBuffer.pOffsets);
 }
 
 
@@ -93,17 +95,16 @@ void submitQueue(
 	const uint32_t commandBufferCount, const VkCommandBuffer* commandBuffer,
 	const VkFence fence) {
 
-	VkSubmitInfo sinfo = {
-		.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO,
-		.pNext = NULL,
-		.waitSemaphoreCount = waitSemaphoreCount,
-		.pWaitSemaphores = pwaitSemaphores,
-		.pWaitDstStageMask = pWaitDstStageMask,
-		.signalSemaphoreCount = signalSemaphoreCount,
-		.pSignalSemaphores = pSignalSemaphores,
-		.commandBufferCount = commandBufferCount,
-		.pCommandBuffers = commandBuffer
-	};
+	VkSubmitInfo sinfo = {};
+	sinfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+	sinfo.pNext = NULL;
+	sinfo.waitSemaphoreCount = waitSemaphoreCount;
+	sinfo.pWaitSemaphores = pwaitSemaphores;
+	sinfo.pWaitDstStageMask = pWaitDstStageMask;
+	sinfo.signalSemaphoreCount = signalSemaphoreCount;
+	sinfo.pSignalSemaphores = pSignalSemaphores;
+	sinfo.commandBufferCount = commandBufferCount;
+	sinfo.pCommandBuffers = commandBuffer;
 
 	vkQueueSubmit(vulkan_graphics_queues[0], 1, &sinfo, fence);
 }

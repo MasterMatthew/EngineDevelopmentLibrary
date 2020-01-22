@@ -9,34 +9,34 @@
 #include "vulkan_constant.h"
 #include "vulkan_struct.h"
 #include "vulkan_command_buffer.h"
+#include "vulkan_memory.h"
 
 
-void initVulkan(const char *applicationName, const char *engineName, const string_array *requestedLayers, const string_array *requestedExtension) {
+void initVulkan(const char *applicationName, const char *engineName, const string_array &requestedLayers, const string_array &requestedExtension) {
 	//Vulkan instance creation
-	VkApplicationInfo appInfo = {
-		.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO,
-		.pNext = NULL,
-		.pApplicationName = applicationName,
-		.applicationVersion = VK_MAKE_VERSION(1, 0, 0),
-		.pEngineName = engineName,
-		.engineVersion = VK_MAKE_VERSION(3, 0, 0),
-		.apiVersion = VK_API_VERSION_1_1
-	};
+	VkApplicationInfo appInfo = {};
+	appInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
+	appInfo.pNext = NULL;
+	appInfo.pApplicationName = applicationName;
+	appInfo.applicationVersion = VK_MAKE_VERSION(1, 0, 0);
+	appInfo.pEngineName = engineName;
+	appInfo.engineVersion = VK_MAKE_VERSION(3, 0, 0);
+	appInfo.apiVersion = VK_API_VERSION_1_1;
+
 	//TODO: CHECK LAYERS AND EXTENSIONS
-	VkInstanceCreateInfo instanceCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO,
-		.flags = 0,
-		.pNext = NULL,
-		.pApplicationInfo = &appInfo,
-		.enabledLayerCount = requestedLayers->stringCount,
-		.ppEnabledLayerNames = requestedLayers->pStrings,
-		.enabledExtensionCount = requestedExtension->stringCount,
-		.ppEnabledExtensionNames = requestedExtension->pStrings
-	};
+	VkInstanceCreateInfo instanceCreateInfo = {};
+	instanceCreateInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
+	instanceCreateInfo.flags = 0;
+	instanceCreateInfo.pNext = NULL;
+	instanceCreateInfo.pApplicationInfo = &appInfo;
+	instanceCreateInfo.enabledLayerCount = requestedLayers.stringCount;
+	instanceCreateInfo.ppEnabledLayerNames = requestedLayers.pStrings;
+	instanceCreateInfo.enabledExtensionCount = requestedExtension.stringCount;
+	instanceCreateInfo.ppEnabledExtensionNames = requestedExtension.pStrings;
 
 	uint32_t count;
 	vkEnumerateInstanceLayerProperties(&count, NULL);
-	VkLayerProperties* layerProperties = malloc(count * sizeof(VkLayerProperties));
+	VkLayerProperties *layerProperties = (VkLayerProperties*) malloc(count * sizeof(VkLayerProperties));
 	vkEnumerateInstanceLayerProperties(&count, layerProperties);
 
 	for (int i = 0; i < count; i++) {
@@ -55,7 +55,7 @@ void initVulkan(const char *applicationName, const char *engineName, const strin
 
 	//Enumerate the physical devices
 	vkEnumeratePhysicalDevices(vulkan_instance, &vulkan_physical_device_count, NULL);
-	vulkan_physical_devices = malloc(vulkan_physical_device_count * sizeof(VkPhysicalDevice));
+	vulkan_physical_devices = (VkPhysicalDevice*) malloc(vulkan_physical_device_count * sizeof(VkPhysicalDevice));
 	vkEnumeratePhysicalDevices(vulkan_instance, &vulkan_physical_device_count, vulkan_physical_devices);
 
 	VkPhysicalDevice bestDevice;
@@ -84,24 +84,23 @@ void initVulkan(const char *applicationName, const char *engineName, const strin
 	//Handle Queues
 	uint32_t queueFamilyCount;
 	vkGetPhysicalDeviceQueueFamilyProperties(vulkan_physical_device, &queueFamilyCount, NULL);
-	VkQueueFamilyProperties* queueFamilies = malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties));
+	VkQueueFamilyProperties *queueFamilies = (VkQueueFamilyProperties*) malloc(queueFamilyCount * sizeof(VkQueueFamilyProperties));
 	vkGetPhysicalDeviceQueueFamilyProperties(vulkan_physical_device, &queueFamilyCount, queueFamilies);
 
-	VkDeviceQueueCreateInfo* deviceQueueCreateInfo = malloc(queueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
+	VkDeviceQueueCreateInfo *deviceQueueCreateInfo = (VkDeviceQueueCreateInfo*) malloc(queueFamilyCount * sizeof(VkDeviceQueueCreateInfo));
 
 	float priorities[] = { 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f };
 
 	for (uint32_t i = 0; i < queueFamilyCount; i++) {
 		VkQueueFamilyProperties queueFamily = queueFamilies[i];
 
-		deviceQueueCreateInfo[i] = (VkDeviceQueueCreateInfo) {
-			.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO,
-			.flags = 0,
-			.pNext = NULL,
-			.queueFamilyIndex = i,
-			.queueCount = queueFamily.queueCount,
-			.pQueuePriorities = priorities
-		};
+		deviceQueueCreateInfo[i] = {};
+		deviceQueueCreateInfo[i].sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
+		deviceQueueCreateInfo[i].flags = 0;
+		deviceQueueCreateInfo[i].pNext = NULL;
+		deviceQueueCreateInfo[i].queueFamilyIndex = i;
+		deviceQueueCreateInfo[i].queueCount = queueFamily.queueCount;
+		deviceQueueCreateInfo[i].pQueuePriorities = priorities;
 
 		if (queueFamily.queueCount <= 0) continue;
 		if (!(~queueFamily.queueFlags & (VK_QUEUE_GRAPHICS_BIT | VK_QUEUE_COMPUTE_BIT | VK_QUEUE_TRANSFER_BIT))) {
@@ -125,38 +124,39 @@ void initVulkan(const char *applicationName, const char *engineName, const strin
 
 	deviceCreateInfo.pEnabledFeatures = &vulkan_physical_device_features;
 
-	void* extensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
-	deviceCreateInfo.ppEnabledExtensionNames = &extensions;
+	const char *const extensions[] = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
+	deviceCreateInfo.ppEnabledExtensionNames = extensions;
 	deviceCreateInfo.enabledExtensionCount = 1;
 
 	//TODO: Fix validation
-	deviceCreateInfo.ppEnabledLayerNames = requestedLayers->pStrings;// &"VK_LAYER_LUNARG_standard_validation";
-	deviceCreateInfo.enabledLayerCount = requestedLayers->stringCount;
+	deviceCreateInfo.ppEnabledLayerNames = requestedLayers.pStrings;// &"VK_LAYER_LUNARG_standard_validation";
+	deviceCreateInfo.enabledLayerCount = requestedLayers.stringCount;
 
 	checkResult(vkCreateDevice(vulkan_physical_device, &deviceCreateInfo, NULL, &vulkan_logical_device), "Device creation");
 
 	//Get queues
 	vulkan_graphics_count = queueFamilies[vulkan_graphics_family].queueCount;
-	vulkan_graphics_queues = malloc(vulkan_graphics_count * sizeof(VkQueue*));
+	vulkan_graphics_queues = (VkQueue*) malloc(vulkan_graphics_count * sizeof(VkQueue));
 	for (int i = 0; i < vulkan_graphics_count; i++)
 		vkGetDeviceQueue(vulkan_logical_device, vulkan_graphics_family, i, &vulkan_graphics_queues[i]);
 
 	if (vulkan_compute_family != vulkan_graphics_family) {
 		vulkan_compute_count = queueFamilies[vulkan_compute_family].queueCount;
-		vulkan_compute_queues = malloc(vulkan_compute_count * sizeof(VkQueue*));
+		vulkan_compute_queues = (VkQueue*) malloc(vulkan_compute_count * sizeof(VkQueue*));
 		for (int i = 0; i < vulkan_compute_count; i++)
 			vkGetDeviceQueue(vulkan_logical_device, vulkan_compute_family, i, &vulkan_compute_queues[i]);
 	}
 
 	if (vulkan_transfer_family != vulkan_graphics_family) {
 		vulkan_transfer_count = queueFamilies[vulkan_transfer_family].queueCount;
-		vulkan_transfer_queues = malloc(vulkan_transfer_count * sizeof(VkQueue*));
+		vulkan_transfer_queues = (VkQueue*) malloc(vulkan_transfer_count * sizeof(VkQueue*));
 		for (int i = 0; i < vulkan_transfer_count; i++)
 			vkGetDeviceQueue(vulkan_logical_device, vulkan_transfer_family, i, &vulkan_transfer_queues[i]);
 	}
 
 	printf("Queue's gathered!\n");
 	
+	init_vulkan_memory();
 }
 
 
@@ -167,6 +167,8 @@ void termVulkan() {
 	free(vulkan_compute_queues);
 	free(vulkan_transfer_queues);
 	printf("Queue's freed!\n");
+
+	term_vulkan_memory();
 
 	vkDestroyDevice(vulkan_logical_device, NULL);
 	printf("Vulkan logical device destroyed!\n");
@@ -219,13 +221,12 @@ void createSwapchainFramebuffer(const VkRenderPass renderpass, const uint32_t im
 //SHADERS
 //TODO: Move to shader module
 void createShaderModule(const uint32_t size, const uint32_t* code, VkShaderModule* shaderModule) {
-	VkShaderModuleCreateInfo shaderModuleCreateInfo = {
-		.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.codeSize = size,
-		.pCode = code
-	};
+	VkShaderModuleCreateInfo shaderModuleCreateInfo = {};
+	shaderModuleCreateInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
+	shaderModuleCreateInfo.pNext = NULL;
+	shaderModuleCreateInfo.flags = 0;
+	shaderModuleCreateInfo.codeSize = size;
+	shaderModuleCreateInfo.pCode = code;
 
 	checkResult(vkCreateShaderModule(vulkan_logical_device, &shaderModuleCreateInfo, NULL, shaderModule), "Shader module creation");
 }
@@ -295,7 +296,7 @@ void updateDescriptorBuffers(VkBuffer uniformBuffer, VkImageView texture, VkSamp
 	imageInfo.sampler = sampler;
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	VkWriteDescriptorSet *writeDescriptorSet = malloc(sizeof(VkWriteDescriptorSet) * 2);
+	VkWriteDescriptorSet *writeDescriptorSet = (VkWriteDescriptorSet*) malloc(2 * sizeof(VkWriteDescriptorSet));
 	writeDescriptorSet[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	writeDescriptorSet[0].pNext = NULL;
 	writeDescriptorSet[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -324,7 +325,7 @@ void updateDescriptorBuffers(VkBuffer uniformBuffer, VkImageView texture, VkSamp
 
 //Temporary code
 void updateUniformBuffer(VkDeviceMemory uniformBufferMemory) {
-	buffer_object ubo;
+	buffer_object ubo = {};
 	mat4 model = {
 		1, 0, 0, 0,
 		0, 1, 0, 0,
@@ -342,9 +343,15 @@ void updateUniformBuffer(VkDeviceMemory uniformBufferMemory) {
 	glm_mat4_identity(ubo.model);
 
 	float time = clock();
-	glm_rotate(ubo.model, time * 0.001f * glm_rad(90), (vec3) { 0, 0, 1 });
-	glm_lookat((vec3) { 500, 300, 500 }, (vec3) { 0, 0, 0 }, (vec3) { 0, 0, 1 }, ubo.view);
-	glm_perspective(glm_rad(45.0f), 800 / (float)600, 0.1f, 2000, &ubo.proj);
+	vec3 rotate = { 0, 0, 1 };
+	vec3 eye = { 500, 300, 500 };
+	vec3 center = { 0, 0, 0 };
+	vec3 up = { 0, 0, 1 };
+
+	glm_rotate(ubo.model, time * 0.001f * glm_rad(90), rotate);
+	glm_lookat(eye, center, up, ubo.view);
+
+	glm_perspective(glm_rad(45.0f), 800 / (float)600, 0.1f, 2000, ubo.proj);
 	ubo.proj[1][1] = -1;
 
 

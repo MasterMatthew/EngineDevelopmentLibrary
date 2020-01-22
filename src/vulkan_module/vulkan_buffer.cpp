@@ -1,12 +1,16 @@
 #include "vulkan_buffer.h"
 
+//#define VMA_IMPLEMENTATION
+#include "vk_mem_alloc.h"
+
 #include "vulkan_state.h"
+//#include "vulkan_memory_state.h"
 #include "vulkan_image.h"
 #include "vulkan_debug.h"
 
 //FUNCTION
 
-inline uint32_t getMemoryType(int filter, VkMemoryPropertyFlags properties) {
+uint32_t getMemoryType(int filter, VkMemoryPropertyFlags properties) {
 	//TODO: Branching
 	for (uint32_t i = 0; i < vulkan_physical_device_memory_properties.memoryTypeCount; i++) {
 		if (filter & (1 << i) && vulkan_physical_device_memory_properties.memoryTypes[i].propertyFlags & properties) return i;
@@ -18,18 +22,25 @@ inline uint32_t getMemoryType(int filter, VkMemoryPropertyFlags properties) {
 
 
 //BUFFER
-void createBuffer(const int size, const int usage, const VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory *memory) {
+void createBuffer(const int size, const int usage, const VkMemoryPropertyFlags properties, VkBuffer* buffer, VkDeviceMemory* memory) {
 	VkBufferCreateInfo bufferInfo = {
-		.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
-		.pNext = NULL,
-		.flags = 0,
-		.size = size,
-		.usage = usage,
-		.sharingMode = VK_SHARING_MODE_EXCLUSIVE,
-		.queueFamilyIndexCount = 0,
-		.pQueueFamilyIndices = NULL
+		/*.sType =*/ VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO,
+		/*.pNext =*/ NULL,
+		/*.flags =*/ 0,
+		/*.size =*/ size,
+		/*.usage =*/ usage,
+		/*.sharingMode =*/ VK_SHARING_MODE_EXCLUSIVE,
+		/*.queueFamilyIndexCount =*/ 0,
+		/*.pQueueFamilyIndices =*/ NULL
 	};
 
+	//VmaAllocationCreateInfo allocInfo = {};
+	//allocInfo.usage = VMA_MEMORY_USAGE_GPU_ONLY;
+
+	//vmaCreateBuffer(vulkan_memory_allocator, &bufferInfo, &allocInfo, &(buffer->buffer), (VmaAllocation*)&(buffer->memory), nullptr);
+	//vulkan_memory_allocations[*buffer] = alloc;
+
+	
 	checkResult(vkCreateBuffer(vulkan_logical_device, &bufferInfo, NULL, buffer), "Buffer creation");
 
 	VkMemoryRequirements memoryRequirements;
@@ -41,10 +52,12 @@ void createBuffer(const int size, const int usage, const VkMemoryPropertyFlags p
 
 	checkResult(vkAllocateMemory(vulkan_logical_device, &allocateInfo, NULL, memory), "Buffer memory allocation");
 	checkResult(vkBindBufferMemory(vulkan_logical_device, *buffer, *memory, 0), "Memory binding");
+	
 }
 
 void destroyBuffer(VkBuffer buffer, VkDeviceMemory memory) {
 	vkDestroyBuffer(vulkan_logical_device, buffer, NULL);
+	//vmaDestroyBuffer(vulkan_memory_allocator, buffer.buffer, (VmaAllocation) buffer.memory);
 	vkFreeMemory(vulkan_logical_device, memory, NULL);
 }
 
@@ -54,11 +67,12 @@ void destroyVertexBuffer(VertexBuffer *vertexBuffer) {
 }
 
 void copyBuffer(const VkCommandBuffer cb, const VkBuffer srcBuffer, const VkBuffer dstBuffer, const VkDeviceSize size) {
-	vkCmdCopyBuffer(cb, srcBuffer, dstBuffer, 1, &(VkBufferCopy) { 0, 0, size });
+	VkBufferCopy bufferCopy = { 0, 0, size };
+	vkCmdCopyBuffer(cb, srcBuffer, dstBuffer, 1, &bufferCopy);
 }
 
 //Processes a VertexBufferCreateInfo into a vertexBuffer
-void createVertexBuffer(const VkCommandPool commandPool, const VertexBufferCreateInfo *info, VertexBuffer *vertexBuffer) {
+void createVertexBuffer(VkCommandPool commandPool, VertexBufferCreateInfo *info, VertexBuffer *vertexBuffer) {
 	//Just in case the compiler doesn't do this for me
 	uint32_t indicesCount = info->indicesCount;
 	uint32_t* pIndices = info->pIndices;
@@ -72,7 +86,7 @@ void createVertexBuffer(const VkCommandPool commandPool, const VertexBufferCreat
 	//Set half of the variables in vertexBuffer, buffer and memory will be set later
 	vertexBuffer->indicesCount = indicesCount;
 	vertexBuffer->attributeCount = attributeCount;
-	VkDeviceSize* pOffsets = vertexBuffer->pOffsets = malloc(attributeCount * sizeof(uint32_t));
+	VkDeviceSize* pOffsets = vertexBuffer->pOffsets = (VkDeviceSize*) malloc(attributeCount * sizeof(uint32_t));
 
 	uint32_t verticesSize = 0;
 	//Calculate the totale size of all vertices as well as the offsets of each attribute
@@ -94,7 +108,6 @@ void createVertexBuffer(const VkCommandPool commandPool, const VertexBufferCreat
 	vkUnmapMemory(vulkan_logical_device, stagingMemory);
 
 	createBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, &vertexBuffer->buffer, &vertexBuffer->memory);
-
 	VkCommandBuffer cb;
 	allocateCommandBuffer(commandPool, &cb);
 	vkBeginCommandBuffer(cb, &COMMAND_BUFFER_BEGIN_INFO);

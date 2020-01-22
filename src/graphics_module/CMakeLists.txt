@@ -1,5 +1,5 @@
 
-file(GLOB_RECURSE GRAPHICS_MODULE_SOURCES *.h *.c)
+file(GLOB_RECURSE GRAPHICS_MODULE_SOURCES *.h *.cpp)
 
 add_library(graphics_module STATIC ${GRAPHICS_MODULE_SOURCES})
 

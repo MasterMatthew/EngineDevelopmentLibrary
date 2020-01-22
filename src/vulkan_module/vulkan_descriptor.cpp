@@ -8,15 +8,11 @@
 //DESCRIPTOR SETS
 
 void createDescriptorPool(VkDescriptorPool* descriptorPool) {
-	VkDescriptorPoolSize *poolSize = (VkDescriptorPoolSize[]) {
-		{
-			.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.descriptorCount = 1
-		}, {
-			.type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.descriptorCount = 1
-		}
-	};
+	VkDescriptorPoolSize poolSize[] = {{
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1
+	}, {
+		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1
+	}};
 
 	VkDescriptorPoolCreateInfo poolCreateInfo;
 	poolCreateInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
@@ -34,21 +30,19 @@ void destroyDescriptorPool(VkDescriptorPool descriptorPool) {
 }
 
 void createDescriptorSetLayout(VkDescriptorSetLayout* descriptorSetLayout) {
-	VkDescriptorSetLayoutBinding* bindings = (VkDescriptorSetLayoutBinding[]) {
-		{
-			.binding = 0,
-				.descriptorCount = 1,
-				.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
-				.stageFlags = VK_SHADER_STAGE_VERTEX_BIT,
-				.pImmutableSamplers = NULL
-		}, {
-			.binding = 1,
-			.descriptorCount = 1,
-			.descriptorType = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
-			.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT,
-			.pImmutableSamplers = NULL
-		}
-	};
+	VkDescriptorSetLayoutBinding bindings[] = {{
+		0,
+		VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER,
+		1,
+		VK_SHADER_STAGE_VERTEX_BIT,
+		NULL
+	}, {
+		1,
+		VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER,
+		1,
+		VK_SHADER_STAGE_FRAGMENT_BIT,
+		NULL
+	}};
 
 	VkDescriptorSetLayoutCreateInfo layoutInfo;
 	layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
@@ -86,7 +80,7 @@ void updateDescriptorSet(VkBuffer uniformBuffer, uint32_t range, VkImageView ima
 	imageInfo.sampler = sampler;
 	imageInfo.imageLayout = VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL;
 
-	VkWriteDescriptorSet *writeDescriptorSet = malloc(sizeof(VkWriteDescriptorSet) * 2);
+	VkWriteDescriptorSet *writeDescriptorSet = (VkWriteDescriptorSet *) malloc(sizeof(VkWriteDescriptorSet) * 2);
 	writeDescriptorSet[0].sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET;
 	writeDescriptorSet[0].pNext = NULL;
 	writeDescriptorSet[0].descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
