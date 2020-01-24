@@ -3,10 +3,29 @@
 
 #include "vulkan/vulkan.h"
 
+/**
+Creates a new swapchain
 
-void createSwapchain(const uint32_t window_width, const uint32_t window_height);
+NOTE: State information about the swapchain is stored in vulkan_state
+
+@param width The width of the swapchain images
+@param height The height of the swapchain images
+*/
+void createSwapchain(const uint32_t width, const uint32_t height);
+
+/**
+Destroy the current swapchain
+*/
 void destroySwapchain();
-void recreateSwapchain(const uint32_t window_width, const uint32_t window_height);
+
+/**
+Recreates the swapchain
+Destroys the previous swapchain and creates a new one
+
+@param width The width of the swapchain images
+@param height The height of the swapchain images
+*/
+void recreateSwapchain(const uint32_t width, const uint32_t height);
 
 
 // TEMPORARY FUNCTIONS

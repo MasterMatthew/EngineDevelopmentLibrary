@@ -1,15 +1,17 @@
 #include "vulkan_swapchain.h"
 
+//#include <algorithm>
+
 #include "vulkan_state.h"
 #include "vulkan_image.h"
 #include "vulkan_debug.h"
 
-void createSwapchain(const uint32_t window_width, const uint32_t window_height) {
+void createSwapchain(const uint32_t width, const uint32_t height) {
 	//Determine swapchain extent
 	if (vulkan_surface_capabilities.currentExtent.width == UINT32_MAX) {
 		vulkan_swapchain_extent = {
-			max(vulkan_surface_capabilities.minImageExtent.width, min(vulkan_surface_capabilities.maxImageExtent.width, window_width)),
-			max(vulkan_surface_capabilities.minImageExtent.height, min(vulkan_surface_capabilities.maxImageExtent.height, window_height))
+			max(vulkan_surface_capabilities.minImageExtent.width, min(vulkan_surface_capabilities.maxImageExtent.width, width)),
+			max(vulkan_surface_capabilities.minImageExtent.height, min(vulkan_surface_capabilities.maxImageExtent.height, height))
 		};
 	}
 	else {
@@ -45,12 +47,14 @@ void createSwapchain(const uint32_t window_width, const uint32_t window_height) 
 	swapchainCreateInfo.oldSwapchain = VK_NULL_HANDLE;
 
 	checkResult(vkCreateSwapchainKHR(vulkan_logical_device, &swapchainCreateInfo, NULL, &vulkan_swapchain), "Swapchain creation");
-
+	
+	//Get the swapchain images
 	vkGetSwapchainImagesKHR(vulkan_logical_device, vulkan_swapchain, &vulkan_swapchain_image_count, NULL);
 	vulkan_swapchain_images = (VkImage *) malloc(vulkan_swapchain_image_count * sizeof(VkImage));
 	vkGetSwapchainImagesKHR(vulkan_logical_device, vulkan_swapchain, &vulkan_swapchain_image_count, vulkan_swapchain_images);
-	printf("Swapchain images retrieved!\n");
+	//printf("Swapchain images retrieved!\n");
 
+	//Create imageviews for all of the swapchain's images
 	vulkan_swapchain_imageviews = (VkImageView *) malloc(vulkan_swapchain_image_count * sizeof(VkImageView));
 
 	VkImageViewCreateInfo imageViewCreateInfo;
@@ -77,12 +81,12 @@ void destroySwapchain() {
 		vkDestroyImageView(vulkan_logical_device, vulkan_swapchain_imageviews[i], NULL);
 	}
 
-	printf("Swapchain destroyed!\n");
+	//printf("Swapchain destroyed!\n");
 }
 
-void recreateSwapchain(const uint32_t window_width, const uint32_t window_height) {
+void recreateSwapchain(const uint32_t width, const uint32_t height) {
 	destroySwapchain();
-	createSwapchain(window_width, window_height);
+	createSwapchain(width, height);
 }
 
 

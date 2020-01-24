@@ -5,13 +5,13 @@
 #include "vulkan_swapchain.h"
 
 //Creates a surface using win32 window handle
-void createSurface(const uint32_t window_width, const uint32_t window_height, const void* hwnd, uint32_t* swapchainImageCount) {
+void createSurface(const uint32_t width, const uint32_t height, const void* window_handle, uint32_t* swapchainImageCount) {
 	VkWin32SurfaceCreateInfoKHR info = {};
 	info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	info.pNext = NULL;
 	info.flags = 0;
 	info.hinstance = GetModuleHandle(NULL);
-	info.hwnd = (HWND) hwnd;
+	info.hwnd = (HWND) window_handle;
 
 	checkResult(vkCreateWin32SurfaceKHR(vulkan_instance, &info, NULL, &vulkan_surface), "Surface creation");
 
@@ -20,8 +20,8 @@ void createSurface(const uint32_t window_width, const uint32_t window_height, co
 	printf("Surface support: %d\n", present_support);
 
 
-	surface_width = window_width;
-	surface_height = window_height;
+	surface_width = width;
+	surface_height = height;
 
 	//Get Capabilities
 	vkGetPhysicalDeviceSurfaceCapabilitiesKHR(vulkan_physical_device, vulkan_surface, &vulkan_surface_capabilities);
@@ -57,7 +57,7 @@ void createSurface(const uint32_t window_width, const uint32_t window_height, co
 		}
 	}
 
-	createSwapchain(window_width, window_height);
+	createSwapchain(width, height);
 
 	*swapchainImageCount = vulkan_swapchain_image_count;
 }

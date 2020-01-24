@@ -4,7 +4,7 @@
 /*
 Avoid importing this file unless it is necessary for some c++ level library
 
-This holds all state involved with the creation of a vulkan instance and vulkan devices
+This holds all state involved with the creation of a vulkan instance and vulkan devices as well as auxillary vulkan systems such as the surface and swapchain
 */
 
 #include "vulkan/vulkan.h"
