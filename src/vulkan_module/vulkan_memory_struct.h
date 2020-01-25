@@ -1,8 +1,0 @@
-#ifndef VULKAN_MEMORY_STRUCT_H
-#define VULKAN_MEMORY_STRUCT_H
-
-
-
-
-
-#endif // !VULKAN_MEMORY_STRUCT_H

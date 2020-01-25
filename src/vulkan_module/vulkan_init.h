@@ -1,3 +1,6 @@
+/*
+This file contains functionality relation to the initial setup of primary vulkan systems such as the vulkan instance, physical devices, logical devices, and queue gathering
+*/
 #ifndef VULKAN_INIT_H
 #define VULKAN_INIT_H
 
@@ -9,7 +12,6 @@
 #include "common_struct.h"
 
 #include "vulkan_struct.h"
-#include "vulkan_create_info.h"
 
 //TODO: Split physical device picking
 

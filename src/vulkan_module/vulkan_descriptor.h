@@ -1,3 +1,6 @@
+/*
+This file contains all functionality related to descriptor pools, descriptor sets, and descriptor set layouts
+*/
 #ifndef VULKAN_DESCRIPTOR_H
 #define VULKAN_DESCRIPTOR_H
 

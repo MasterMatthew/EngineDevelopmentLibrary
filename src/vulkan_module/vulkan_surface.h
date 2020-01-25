@@ -1,5 +1,5 @@
 /*
-This file contains surface relevant functions
+This file contains all functionality related to vulkan surfaces
 */
 
 #ifndef VULKAN_SURFACE_H
@@ -15,9 +15,8 @@ NOTE: The surface state is stored in vulkan_state and is hidden, if direct acces
 @param width The width of the surface
 @param height The height of the surface
 @param window_handle The handle to a window (eg. an HWND on windows)
-@param[out] swapchainImageCount Returns the number of images the swapchain will need
 */
-void createSurface(const uint32_t width, const uint32_t height, const void* window_handle, uint32_t* swapchainImageCount);
+void createSurface(const uint32_t width, const uint32_t height, const void* window_handle);
 
 /**
 Destroys the vulkan surface stored in vulkan_state

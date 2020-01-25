@@ -5,7 +5,7 @@
 #include "vulkan_swapchain.h"
 
 //Creates a surface using win32 window handle
-void createSurface(const uint32_t width, const uint32_t height, const void* window_handle, uint32_t* swapchainImageCount) {
+void createSurface(const uint32_t width, const uint32_t height, const void* window_handle) {
 	VkWin32SurfaceCreateInfoKHR info = {};
 	info.sType = VK_STRUCTURE_TYPE_WIN32_SURFACE_CREATE_INFO_KHR;
 	info.pNext = NULL;
@@ -58,8 +58,6 @@ void createSurface(const uint32_t width, const uint32_t height, const void* wind
 	}
 
 	createSwapchain(width, height);
-
-	*swapchainImageCount = vulkan_swapchain_image_count;
 }
 
 void destroySurface() {

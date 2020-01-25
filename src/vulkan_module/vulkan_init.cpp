@@ -5,7 +5,6 @@
 #include "vulkan_debug.h"
 #include "vulkan_image.h"
 #include "vulkan_pipeline.h"
-#include "vulkan_create_info.h"
 #include "vulkan_constant.h"
 #include "vulkan_struct.h"
 #include "vulkan_command_buffer.h"
@@ -39,7 +38,7 @@ void initVulkan(const char *applicationName, const char *engineName, const strin
 	VkLayerProperties *layerProperties = (VkLayerProperties*) malloc(count * sizeof(VkLayerProperties));
 	vkEnumerateInstanceLayerProperties(&count, layerProperties);
 
-	for (int i = 0; i < count; i++) {
+	for (uint32_t i = 0; i < count; i++) {
 		printf("%s\n", layerProperties[i].layerName);
 	}
 
@@ -58,8 +57,7 @@ void initVulkan(const char *applicationName, const char *engineName, const strin
 	vulkan_physical_devices = (VkPhysicalDevice*) malloc(vulkan_physical_device_count * sizeof(VkPhysicalDevice));
 	vkEnumeratePhysicalDevices(vulkan_instance, &vulkan_physical_device_count, vulkan_physical_devices);
 
-	VkPhysicalDevice bestDevice;
-	for (int i = 0; i < vulkan_physical_device_count; i++) {
+	for (uint32_t i = 0; i < vulkan_physical_device_count; i++) {
 		VkPhysicalDevice currentDevice = vulkan_physical_devices[i];
 		VkPhysicalDeviceProperties properties;
 		VkPhysicalDeviceFeatures features;
@@ -137,26 +135,26 @@ void initVulkan(const char *applicationName, const char *engineName, const strin
 	//Get queues
 	vulkan_graphics_count = queueFamilies[vulkan_graphics_family].queueCount;
 	vulkan_graphics_queues = (VkQueue*) malloc(vulkan_graphics_count * sizeof(VkQueue));
-	for (int i = 0; i < vulkan_graphics_count; i++)
+	for (uint32_t i = 0; i < vulkan_graphics_count; i++)
 		vkGetDeviceQueue(vulkan_logical_device, vulkan_graphics_family, i, &vulkan_graphics_queues[i]);
 
 	if (vulkan_compute_family != vulkan_graphics_family) {
 		vulkan_compute_count = queueFamilies[vulkan_compute_family].queueCount;
 		vulkan_compute_queues = (VkQueue*) malloc(vulkan_compute_count * sizeof(VkQueue*));
-		for (int i = 0; i < vulkan_compute_count; i++)
+		for (uint32_t i = 0; i < vulkan_compute_count; i++)
 			vkGetDeviceQueue(vulkan_logical_device, vulkan_compute_family, i, &vulkan_compute_queues[i]);
 	}
 
 	if (vulkan_transfer_family != vulkan_graphics_family) {
 		vulkan_transfer_count = queueFamilies[vulkan_transfer_family].queueCount;
 		vulkan_transfer_queues = (VkQueue*) malloc(vulkan_transfer_count * sizeof(VkQueue*));
-		for (int i = 0; i < vulkan_transfer_count; i++)
+		for (uint32_t i = 0; i < vulkan_transfer_count; i++)
 			vkGetDeviceQueue(vulkan_logical_device, vulkan_transfer_family, i, &vulkan_transfer_queues[i]);
 	}
 
 	printf("Queue's gathered!\n");
 	
-	init_vulkan_memory();
+	//init_vulkan_memory();
 }
 
 
@@ -168,7 +166,7 @@ void termVulkan() {
 	free(vulkan_transfer_queues);
 	printf("Queue's freed!\n");
 
-	term_vulkan_memory();
+	//term_vulkan_memory();
 
 	vkDestroyDevice(vulkan_logical_device, NULL);
 	printf("Vulkan logical device destroyed!\n");
@@ -342,7 +340,7 @@ void updateUniformBuffer(VkDeviceMemory uniformBufferMemory) {
 
 	glm_mat4_identity(ubo.model);
 
-	float time = clock();
+	float time = (float) clock();
 	vec3 rotate = { 0, 0, 1 };
 	vec3 eye = { 500, 300, 500 };
 	vec3 center = { 0, 0, 0 };

@@ -1,3 +1,6 @@
+/*
+This file contains all functionality related to vulkan pipelines
+*/
 #ifndef VULKAN_PIPELINE_H
 #define VULKAN_PIPELINE_H
 

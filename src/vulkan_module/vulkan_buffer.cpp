@@ -1,24 +1,12 @@
 #include "vulkan_buffer.h"
 
 //#define VMA_IMPLEMENTATION
-#include "vk_mem_alloc.h"
+//#include "vk_mem_alloc.h"
 
-#include "vulkan_state.h"
-//#include "vulkan_memory_state.h"
-#include "vulkan_image.h"
 #include "vulkan_debug.h"
-
-//FUNCTION
-
-uint32_t getMemoryType(int filter, VkMemoryPropertyFlags properties) {
-	//TODO: Branching
-	for (uint32_t i = 0; i < vulkan_physical_device_memory_properties.memoryTypeCount; i++) {
-		if (filter & (1 << i) && vulkan_physical_device_memory_properties.memoryTypes[i].propertyFlags & properties) return i;
-	}
-
-	fprintf(stderr, "Failed to find memory type!");
-	return 0;
-}
+#include "vulkan_image.h"
+#include "vulkan_memory.h"
+#include "vulkan_state.h"
 
 
 //BUFFER
@@ -61,16 +49,6 @@ void destroyBuffer(VkBuffer buffer, VkDeviceMemory memory) {
 	vkFreeMemory(vulkan_logical_device, memory, NULL);
 }
 
-void destroyVertexBuffer(VertexBuffer *vertexBuffer) {
-	vkDestroyBuffer(vulkan_logical_device, vertexBuffer->buffer, NULL);
-	vkFreeMemory(vulkan_logical_device, vertexBuffer->memory, NULL);
-}
-
-void copyBuffer(const VkCommandBuffer cb, const VkBuffer srcBuffer, const VkBuffer dstBuffer, const VkDeviceSize size) {
-	VkBufferCopy bufferCopy = { 0, 0, size };
-	vkCmdCopyBuffer(cb, srcBuffer, dstBuffer, 1, &bufferCopy);
-}
-
 //Processes a VertexBufferCreateInfo into a vertexBuffer
 void createVertexBuffer(VkCommandPool commandPool, VertexBufferCreateInfo *info, VertexBuffer *vertexBuffer) {
 	//Just in case the compiler doesn't do this for me
@@ -86,7 +64,7 @@ void createVertexBuffer(VkCommandPool commandPool, VertexBufferCreateInfo *info,
 	//Set half of the variables in vertexBuffer, buffer and memory will be set later
 	vertexBuffer->indicesCount = indicesCount;
 	vertexBuffer->attributeCount = attributeCount;
-	VkDeviceSize* pOffsets = vertexBuffer->pOffsets = (VkDeviceSize*) malloc(attributeCount * sizeof(uint32_t));
+	VkDeviceSize* pOffsets = vertexBuffer->pOffsets = (VkDeviceSize*)malloc(attributeCount * sizeof(uint32_t));
 
 	uint32_t verticesSize = 0;
 	//Calculate the totale size of all vertices as well as the offsets of each attribute
@@ -119,4 +97,18 @@ void createVertexBuffer(VkCommandPool commandPool, VertexBufferCreateInfo *info,
 	vkQueueWaitIdle(vulkan_graphics_queues[0]);
 	vkFreeCommandBuffers(vulkan_logical_device, commandPool, 1, &cb);
 	destroyBuffer(stagingBuffer, stagingMemory);
+}
+
+void destroyVertexBuffer(VertexBuffer *vertexBuffer) {
+	vkDestroyBuffer(vulkan_logical_device, vertexBuffer->buffer, NULL);
+	vkFreeMemory(vulkan_logical_device, vertexBuffer->memory, NULL);
+}
+
+
+
+
+
+void copyBuffer(const VkCommandBuffer cb, const VkBuffer srcBuffer, const VkBuffer dstBuffer, const VkDeviceSize size) {
+	VkBufferCopy bufferCopy = { 0, 0, size };
+	vkCmdCopyBuffer(cb, srcBuffer, dstBuffer, 1, &bufferCopy);
 }

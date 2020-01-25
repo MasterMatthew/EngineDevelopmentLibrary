@@ -1,3 +1,6 @@
+/*
+This file contains all functionality related to command buffers
+*/
 #ifndef VULKAN_COMMAND_BUFFER_H
 #define VULKAN_COMMAND_BUFFER_H
 

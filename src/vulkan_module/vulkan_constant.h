@@ -3,10 +3,6 @@
 
 #include "vulkan/vulkan.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
-
 // SEMAPHORES //
 
 //Semaphores currently only have one possible create info
@@ -32,8 +28,4 @@ static const VkFenceCreateInfo FENCE_CREATE_INFO_SIGNALED = {
 	/*.flags = */ VK_FENCE_CREATE_SIGNALED_BIT
 };
 
-
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 #endif // VULKAN_CONSTANT_H

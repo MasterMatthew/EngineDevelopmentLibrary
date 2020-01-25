@@ -1,3 +1,6 @@
+/*
+This file contains all functionality related to vulkan images
+*/
 #ifndef VULKAN_IMAGE_H
 #define VULKAN_IMAGE_H
 

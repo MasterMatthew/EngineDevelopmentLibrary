@@ -62,7 +62,9 @@ void initRenderer() {
 	//Initialize Vulkan
 	initVulkan("Demo", "EngineDev", layers, totalExtensions);
 	//Create Surface
-	createSurface(WINDOW_WIDTH, WINDOW_HEIGHT, getWindowHandle(), &swapchainImageCount);
+	createSurface(WINDOW_WIDTH, WINDOW_HEIGHT, getWindowHandle());
+	swapchainImageCount = getSwapchainImageCount();
+
 	//Create Renderpass
 	createRenderpass(&renderpass);
 
@@ -124,7 +126,7 @@ void initRenderer() {
 
 	VertexBuffer* vertexBuffers = (VertexBuffer*) malloc(numMeshes * sizeof(VertexBuffer));
 
-	for (int i = 0; i < numMeshes; i++) {
+	for (uint32_t i = 0; i < numMeshes; i++) {
 		uint32_t attribSizes[] = { sizeof(vec3), sizeof(vec3), sizeof(vec2) };
 		scene[i].pAttributeSizes = attribSizes;
 
@@ -173,7 +175,7 @@ void initRenderer() {
 
 	vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, NULL);
 
-	for (int i = 0; i < numMeshes; i++) {
+	for (uint32_t i = 0; i < numMeshes; i++) {
 		cmdBindVertexBuffer(commandBuffer, vertexBuffers[i]);
 		vkCmdDrawIndexed(commandBuffer, vertexBuffers[i].indicesCount, 1, 0, 0, 0);
 	}

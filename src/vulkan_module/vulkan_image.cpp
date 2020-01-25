@@ -4,6 +4,7 @@
 #include "vulkan_command_buffer.h"
 #include "vulkan_constant.h"
 #include "vulkan_debug.h"
+#include "vulkan_memory.h"
 #include "vulkan_state.h"
 
 

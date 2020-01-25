@@ -1,3 +1,7 @@
+/*
+This file contains all functionality related to swapchains
+*/
+
 #ifndef VULKAN_SWAPCHAIN_H
 #define VULKAN_SWAPCHAIN_H
 
@@ -27,12 +31,10 @@ Destroys the previous swapchain and creates a new one
 */
 void recreateSwapchain(const uint32_t width, const uint32_t height);
 
+// GETTER FUNCTIONS
 
-// TEMPORARY FUNCTIONS
+// Returns the number of swapchain images
+uint32_t getSwapchainImageCount();
 
-void presentQueue(
-	const uint32_t waitSemaphoreCount, const VkSemaphore* pwaitSemaphores,
-	//const uint32_t swapchainCount, const VkSwapchainKHR* pSwapchains, 
-	const uint32_t* pImageIndices);
 
 #endif // !VULKAN_SWAPCHAIN_H

@@ -1,7 +1,10 @@
+/*
+This file contains functionality to debug vulkan systems
+*/
 #ifndef VULKAN_DEBUG_H
 #define VULKAN_DEBUG_H
 
-#include <stdio.h>
+//#include <stdio.h>
 
 #include "logger.h"
 #include "vulkan/vulkan.h"
